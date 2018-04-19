@@ -10,7 +10,7 @@ if [[ -z ${UserName} ]] || [[ $UserName == "changemeplease" ]]; then
 fi
 
 GitHubApi="https://api.github.com/users/${UserName}/starred"
-LastPage="$(curl -I ${GitHubApi} | grep -Eo 'page=[[:digit:]]+' | tail -n1)"
+LastPage="$(curl -sI ${GitHubApi} | grep -Eo 'page=[[:digit:]]+' | tail -n1)"
 TempFile=$(mktemp -t github2email.sh.XXXXXXXXXX)
 
 # Checking for dependencies
@@ -38,10 +38,21 @@ for Star in $(cat ${TempFile}); do
   # Only add a project to r2e config if it does not already exist
   IsDeclaredProject="$(r2e list | grep ${ProjectUrl})"
   if [[ -z ${IsDeclaredProject} ]]; then
-    r2e add ${ProjectName} ${ProjectUrl}
+    r2e add g2e_${ProjectName} ${ProjectUrl}
     # We only want to be informed of future releases
-    r2e run --no-send ${ProjectName}
+    r2e run --no-send g2e_${ProjectName}
   echo "Project ${ProjectName} has been added to rss2email configuration !"
+  fi
+done
+
+# Delete projects that were added to rss2email by this script but are no longer starred on GitHub
+AddedProjects="$(r2e list | grep g2e_ | grep -Eo "https://github.com/.*/releases.atom")"
+for Projects in ${AddedProjects}; do
+  StillStaredProject="$(grep ${Projects} ${TempFile})"
+  if [[ -z $StillStaredProject ]]; then
+    ProjectToRemove=${StillStaredProject%,*}
+    r2e delete ${ProjectToRemove}
+    echo "Project ${ProjectName} has been removed from rss2email configuration !"
   fi
 done
 

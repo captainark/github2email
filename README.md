@@ -4,6 +4,8 @@
 
 Github2eMail is a bash script that parses the GitHub API for projects you've starred and adds them to your rss2email configuration.
 
+The script will also delete projects it has added to your rss2email configuration if you're not starring them on GitHub anymore.
+
 ## Dependencies
 
 - [curl](https://github.com/curl/curl)
@@ -23,7 +25,3 @@ Run the script.
 You're done !
 
 You can also run the script periodically from cron if you want.
-
-## TODO
-
-Remove projects that were added by the script and are no longer starred by the user on GitHub from rss2email configuration.
