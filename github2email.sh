@@ -6,6 +6,7 @@ source "$(dirname $0)/config"
 # Checking if UserName has been defined
 if [[ -z ${UserName} ]] || [[ $UserName == "changemeplease" ]]; then
   echo "GitHub username is incorrect of undefined in config file. Exiting..."
+  exit 2
 fi
 
 GitHubApi="https://api.github.com/users/${UserName}/starred"
