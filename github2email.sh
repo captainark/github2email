@@ -11,10 +11,10 @@ fi
 
 GitHubApi="https://api.github.com/users/${UserName}/starred"
 LastPage="$(curl -I ${GitHubApi} | grep -Eo 'page=[[:digit:]]+' | tail -n1)"
-TempFile=$(mktemp -t $0)
+TempFile=$(mktemp -t github2email.sh.XXXXXXXXXX)
 
 for StarPages in $(seq 1 ${LastPage#*=}); do
-  curl -s "${GitHubApi}&page=${StarPages}" | jq -r '.[] | .name + "," + .html_url' | sed 's#$#/releases.atom#' >> ${TempFile}
+  curl -s "${GitHubApi}?page=${StarPages}" | jq -r '.[] | .name + "," + .html_url' | sed 's#$#/releases.atom#' >> ${TempFile}
 done
 
 # Checking for API request success
