@@ -10,10 +10,15 @@ if [[ -z ${UserName} ]] || [[ $UserName == "changemeplease" ]]; then
 fi
 
 GitHubApi="https://api.github.com/users/${UserName}/starred"
-StarredList=$(curl -s ${GitHubApi} | jq -r '.[] | .name + "," + .html_url' | sed 's#$#/releases.atom#')
+LastPage="$(curl -I ${GitHubApi} | grep -Eo 'page=[[:digit:]]+' | tail -n1)"
+TempFile=$(mktemp -t $0)
+
+for StarPages in $(seq 1 ${LastPage#*=}); do
+  curl -s "${GitHubApi}&page=${StarPages}" | jq -r '.[] | .name + "," + .html_url' | sed 's#$#/releases.atom#' >> ${TempFile}
+done
 
 # Checking for API request success
-if [[ -z ${StarredList} ]]; then
+if [[ ! -s ${TempFile} ]]; then
   echo "Something went wrong while fetching the project starred list for ${UserName}. Exiting..."
   exit 2
 fi
@@ -27,7 +32,7 @@ for Dependencies in curl jq r2e; do
 done
 
 # Doing our magic stuff that does cool shit
-for Star in ${StarredList}; do
+for Star in $(cat ${TempFile}); do
   ProjectName=${Star%,*}
   ProjectUrl=${Star##*,}
   # Only add a project to r2e config if it does not already exist
@@ -39,3 +44,5 @@ for Star in ${StarredList}; do
   echo "Project ${ProjectName} has been added to rss2email configuration !"
   fi
 done
+
+[[ -f ${TempFile} ]] && rm ${TempFile}
