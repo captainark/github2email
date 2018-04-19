@@ -50,8 +50,8 @@ AddedProjects="$(r2e list | grep g2e_ | grep -Eo "https://github.com/.*/releases
 for Projects in ${AddedProjects}; do
   StillStaredProject="$(grep ${Projects} ${TempFile})"
   if [[ -z ${StillStaredProject} ]]; then
-    ProjectToRemove=${StillStaredProject%,*}
-    r2e delete ${ProjectToRemove}
+    ProjectToRemove="$(echo ${Projects} | cut -d'/' -f5)"
+    r2e delete g2e_${ProjectToRemove}
     echo "Project ${ProjectToRemove} has been removed from rss2email configuration !"
   fi
 done
