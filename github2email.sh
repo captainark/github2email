@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Function to clean temporary file
+ExitCleanup() {
+  if [[ ! -z ${TempFile} ]]; then
+    [[ -f ${TempFile} ]] && rm ${TempFile}
+  fi
+}
+
+trap ExitCleanup EXIT
+
 # shellcheck source=config
 source "$(dirname $0)/config"
 
@@ -55,5 +64,3 @@ for Projects in ${AddedProjects}; do
     echo "Project ${ProjectToRemove} has been removed from rss2email configuration !"
   fi
 done
-
-[[ -f ${TempFile} ]] && rm ${TempFile}
