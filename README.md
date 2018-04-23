@@ -25,3 +25,9 @@ Run the script.
 You're done !
 
 You can also run the script periodically from cron if you want.
+
+## Credits and licence
+
+This script was first written by Antoine "CaptainArk" Joubert in 2018.
+
+This script is made avaialble under the [MIT licence](https://github.com/captainark/github2email/blob/master/LICENCE)

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Github2eMail is a bash script that parses the GitHub API for projects you've
+# starred and adds them to your rss2email configuration.
+# The script will also delete projects it has added to your rss2email
+# configuration if you're not starring them on GitHub anymore.
+
+# Author : Antoine "CaptainArk" Joubert, 2018
+
 # Function to clean temporary file
 ExitCleanup() {
   if [[ ! -z ${TempFile} ]]; then
